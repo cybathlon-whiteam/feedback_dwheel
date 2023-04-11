@@ -56,8 +56,8 @@ class SmrControlWheel(object):
             resbci()
             return True
         except rospy.ServiceException as e:
-        	print("Service call failed: %s")
-        	return False
+            print("Service call failed: %s")
+            return False
 
     def run(self):
 

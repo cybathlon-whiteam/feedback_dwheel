@@ -65,6 +65,7 @@ class Wheel:
         cv2.addWeighted(tmp, 1.2, tmp1, 0.2, 0, tmp)
         tmp = cv2.circle(tmp, self.center_coordinates, int(self.radious - self.thickness/2), (0,0,0), -1) # for the inside circle
 
+
         # define the points: 
         # 	- central line is defined by q1 and q2
         #	- right line is defined by r1 and r2
@@ -87,7 +88,9 @@ class Wheel:
         # draw the line
         tmp = cv2.line(tmp, l1,l2, COLOR_TH, 2) 
         tmp = cv2.line(tmp, r1,r2, COLOR_TH, 2)
-        tmp = cv2.line(tmp, q1,q2, (255,255,255), 2) 
+        tmp = cv2.line(tmp, q1,q2, (255,255,255), 2)
+
+
 
         # update angles
         self.set_angle_middle(current_middle_angle)

@@ -5,6 +5,7 @@ from draw.Window import Window
 from draw.DWheel import DWheel
 from draw.Cue import Cue
 from draw.Fixation import Fixation
+from draw.SmrBar import SmrBar
 
 
 # SMRGUI class
@@ -26,14 +27,23 @@ class SMRGUI_DWHEEL:
         self.r_arch = self.r_bigger
         self.center_coordinates = (int(self.window.width/2), int(self.window.height/2))
         self.wheel_bar = DWheel(self.canvas, self.center_coordinates, self.thickness, self.r_arch)
+        self.barLeft = SmrBar(self.thickness,'left',self.center_coordinates,self.r_arch)
+        self.barRight = SmrBar(self.thickness,'right',self.center_coordinates,self.r_arch)
+
 
     def init_canvas(self):
         self.canvas = numpy.zeros((self.window.height, self.window.width, 3), numpy.uint8)
 
     def init_wheel_bar(self):
         del self.wheel_bar
-    
         self.wheel_bar = DWheel(self.canvas, self.center_coordinates, self.thickness, self.r_arch)
+
+    def init_bars(self):
+        del self.barLeft
+        del self.barRight
+        self.barLeft = SmrBar(self.thickness,'left',self.center_coordinates,self.r_arch, 'A')
+        self.barRight = SmrBar(self.thickness,'right',self.center_coordinates,self.r_arch, 'B')
+
 
 
     def set_th_left(self, th_left):
@@ -55,12 +65,10 @@ class SMRGUI_DWHEEL:
 
     def set_value_wheel_bar(self, value):
         self.wheel_bar.set_value(value)
-
         self.draw()
 
     def set_color_wheel_bar(self, color):
         self.wheel_bar.set_color_wheel_bar(color)
-
         self.draw()
 
     def get_middle_angle_wheel_bar(self):
@@ -70,7 +78,6 @@ class SMRGUI_DWHEEL:
         self.wheel_bar.set_value(0.0)
         self.wheel_bar.set_angle_middle(90)
         self.wheel_bar.set_color_wheel_bar()
-        
         self.draw()
 
     def add_cue(self,idx):
@@ -91,9 +98,26 @@ class SMRGUI_DWHEEL:
         del self.fixation[:]
         self.draw()
 
+    def set_bar_thresholds(self,thresholds):
+        if len(thresholds)<2:
+            self.barLeft.set_thresholds(thresholds)
+            self.barRight.set_thresholds(thresholds)
+        else:
+            self.barLeft.set_thresholds(thresholds[0])
+            self.barRight.set_thresholds(thresholds[1])
+
+    def set_bar_values(self,values):
+        self.barLeft.value  = values[0]
+        self.barRight.value = values[1]
+
+
+
     def draw(self):
 
         self.canvas = self.wheel_bar.draw()
+
+        self.canvas = self.barLeft.draw(self.canvas)
+        self.canvas = self.barRight.draw(self.canvas)
 
         for cue in self.cue:
             self.canvas = cue.draw(self.canvas)
@@ -102,6 +126,6 @@ class SMRGUI_DWHEEL:
             self.canvas = fixation.draw(self.canvas)
 
         canvas = cv2.resize(self.canvas, (self.window.width * self.window.scale, self.window.height * self.window.scale))
-		
+        
         cv2.imshow('canvas', canvas)
 

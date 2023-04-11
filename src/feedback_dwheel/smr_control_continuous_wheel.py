@@ -3,6 +3,7 @@
 from smr_utilities import *
 
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Float32MultiArray
 
 class SmrControlContinuousWheel(object):
     def __init__(self):
@@ -13,6 +14,7 @@ class SmrControlContinuousWheel(object):
         ##### Configure subscriber #####
         rospy.Subscriber("/integrator/neuroprediction", NeuroOutput, self.receive_probabilities)
         rospy.Subscriber("/cmd_vel", Twist, self.receive_yaw)
+        rospy.Subscriber('/bar_status', Float32MultiArray, self.receive_values_bars)
 
 
         ##### Configure protocol #####
@@ -39,13 +41,17 @@ class SmrControlContinuousWheel(object):
 
         self.time_checker = feedback_timecheck(self.timings_feedback_update)
 
-        self.yaw = 0
+        self.yaw = 0.0
+        self.b_value = [0.0, 0.0]
 
     def receive_probabilities(self, msg):
         self.values = msg.softpredict.data
 
     def receive_yaw(self, msg):
         self.yaw = msg.angular.z
+
+    def receive_values_bars(self, msg):
+        self.b_value = msg.data
 
 
     def reset_bci(self):
@@ -58,13 +64,31 @@ class SmrControlContinuousWheel(object):
             print("Service call failed: %s")
             return False
 
+    def get_bar_thresholds(self):
+        self.threshold_soft_bars = []
+        self.threshold_hard_bars = []
+
+        th_soft = rospy.get_param('~thresholds_soft').replace(" ", "").split(',')
+        for th in th_soft:
+            self.threshold_soft_bars.append(float(th))
+            
+        th_hard = rospy.get_param('~thresholds_hard').replace(" ", "").split(',')
+        for th in th_hard:
+            self.threshold_hard_bars.append(float(th))
+
+
     def run(self):
 
         ##### Configure GUI engine #####
-        gui = SMRGUI_DWHEEL(rospy.get_param('~window_height'),rospy.get_param('~window_width'),rospy.get_param('~window_scale'))
+        gui = SMRGUI_DWHEEL(rospy.get_param('~window_height'),int(rospy.get_param('~window_width')*1.5),rospy.get_param('~window_scale'))
+        #gui = SMRGUI_DWHEEL(rospy.get_param('~window_height'),rospy.get_param('~window_width'),rospy.get_param('~window_scale'))
         gui.init_wheel_bar()
+        gui.init_bars()
         gui.set_th_left(self.threshold_angles[0])
         gui.set_th_right(self.threshold_angles[1])
+
+        #gui.set_bar_thresholds(self.threshold_soft_bars)
+        #gui.set_bar_thresholds(self.threshold_hard_bars)
         
         gui.set_yaw(self.yaw)
         gui.draw()
@@ -90,7 +114,7 @@ class SmrControlContinuousWheel(object):
                 value = normalize_probabilities_wheel_bar(1.0 - self.rec_prob[0], 1, -1, 1, 0)
                 gui.set_value_wheel_bar(value)
                 gui.set_yaw(self.yaw)
-
+                gui.set_bar_values(self.b_value)
 
                 
                 self.time_checker.make_toc()

@@ -25,6 +25,7 @@ def main():
 	rospy.init_node('rosneuro_feedback')
 	mode = get_mode(rospy.get_param('~protocol_mode'))
 
+
 	if mode == 'smrEvaluationWheel':
 		o = SmrEvaluationWheel()
 	elif mode == 'smrCalibrationWheel':
