@@ -43,11 +43,13 @@ class SmrControlContinuousWheel(object):
 
         self.yaw = 0.0
         self.b_value = [0.0, 0.0]
+        self.prec_yaw = 0.0
 
     def receive_probabilities(self, msg):
         self.values = msg.softpredict.data
 
     def receive_yaw(self, msg):
+        self.prec_yaw = self.yaw
         self.yaw = msg.angular.z
 
     def receive_values_bars(self, msg):
@@ -93,7 +95,7 @@ class SmrControlContinuousWheel(object):
         gui.draw()
 
         print("[smrbci] Protocol starts")
-        cv2.waitKey(self.timings_begin)
+        #cv2.waitKey(self.timings_begin)
 
         exit = False
 
@@ -107,7 +109,7 @@ class SmrControlContinuousWheel(object):
             #rospy.spin()
             self.time_checker.make_tic()
 
-            if abs(self.values[0] - self.rec_prob[0]) > 0.00001:
+            if abs(self.values[0] - self.rec_prob[0]) > 0.00001 or abs(self.yaw - self.prec_yaw) > 0.00001:
                 self.rec_prob = self.values
 
                 value = normalize_probabilities_wheel_bar(1.0 - self.rec_prob[0], 1, -1, 1, 0)
