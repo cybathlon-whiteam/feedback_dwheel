@@ -80,8 +80,7 @@ class SmrControlContinuousWheel(object):
     def run(self):
 
         ##### Configure GUI engine #####
-        gui = SMRGUI_DWHEEL(rospy.get_param('~window_height'),int(rospy.get_param('~window_width')*1.5),rospy.get_param('~window_scale'))
-        #gui = SMRGUI_DWHEEL(rospy.get_param('~window_height'),rospy.get_param('~window_width'),rospy.get_param('~window_scale'))
+        gui = SMRGUI_DWHEEL(rospy.get_param('~window_height'),rospy.get_param('~window_width'),rospy.get_param('~window_scale'))
         gui.init_wheel_bar()
         gui.init_bars()
         gui.set_th_left(self.threshold_angles[0])

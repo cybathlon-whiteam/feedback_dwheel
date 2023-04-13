@@ -62,7 +62,6 @@ class SmrBar(Bar):
 
 	def draw(self,actual_canvas):
 		canvas = actual_canvas.copy()
-		print(self.value)
 		bar_fill_start = (self.bar_start[0], int(self.bar_stop[1]-self.value*self.bar_height))
 		
 		tmp = cv2.rectangle(canvas,bar_fill_start,self.bar_stop,self.color,-1) # Fill feedback bars

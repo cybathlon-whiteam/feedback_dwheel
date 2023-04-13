@@ -14,15 +14,15 @@ class SMRGUI_DWHEEL:
         cv2.namedWindow('canvas', cv2.WINDOW_NORMAL)
         cv2.moveWindow('canvas', 0, 0)
         self.window = Window(win_height,win_width,win_scale)
-        self.canvas = numpy.zeros((win_height, win_width, 3), numpy.uint8)
+        self.canvas = numpy.zeros((win_height,win_width, 3), numpy.uint8)
         self.cue = []
         self.fixation = []
         # initialization for the variables used for canvas
         if self.window.width > self.window.height:
-            self.r_bigger = int(self.window.height/2.5)
+            self.r_bigger = int(self.window.height/3)
             self.thickness =  int(self.window.height*0.1)
         else:
-            self.r_bigger = int(self.window.width/2.5)
+            self.r_bigger = int(self.window.width/3)
             self.thickness =  int(self.window.width*0.1)
         self.r_arch = self.r_bigger
         self.center_coordinates = (int(self.window.width/2), int(self.window.height/2))
@@ -125,7 +125,6 @@ class SMRGUI_DWHEEL:
         for fixation in self.fixation:
             self.canvas = fixation.draw(self.canvas)
 
-        canvas = cv2.resize(self.canvas, (self.window.width * self.window.scale, self.window.height * self.window.scale))
-        
+        canvas = cv2.resize(self.canvas, (self.window.width * self.window.scale, self.window.height * self.window.scale))    
         cv2.imshow('canvas', canvas)
 
