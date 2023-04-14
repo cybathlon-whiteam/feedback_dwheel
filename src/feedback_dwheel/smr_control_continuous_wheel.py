@@ -21,10 +21,16 @@ class SmrControlContinuousWheel(object):
         self.n_classes = rospy.get_param('~n_classes')
         self.n_trials = rospy.get_param('~n_trials')
         
-        str_thr = rospy.get_param('~thresholds') 
+        str_thr = rospy.get_param('~thresholds_soft') 
         list_thr = str_thr.split(",")
-        self.list_thrs = [normalize_th(1.0 - float(list_thr[0]), 1, -1, 1, 0), normalize_th(float(list_thr[1]), 1, -1, 1, 0)]
+        self.list_thrs = [normalize_th(1-float(list_thr[0]), 1, -1, 1, 0), normalize_th(float(list_thr[1]), 1, -1, 1, 0)]
         self.threshold_angles =  [(self.list_thrs[0] + 1)*180/2, (self.list_thrs[1] + 1)*180/2]
+        
+        str_ithr = rospy.get_param('~thresholds_hard') 
+        list_ithr = str_ithr.split(",")
+        self.list_ithrs = [normalize_th(1-float(list_ithr[0]), 1, -1, 1, 0), normalize_th(float(list_ithr[1]), 1, -1, 1, 0)]
+        self.threshold_iangles =  [(self.list_ithrs[0] + 1)*180/2, (self.list_ithrs[1] + 1)*180/2]
+
 
         self.colors = [(128,0,128), (50,205,50)]
 
@@ -85,8 +91,13 @@ class SmrControlContinuousWheel(object):
         gui = SMRGUI_DWHEEL(rospy.get_param('~window_height'),rospy.get_param('~window_width'),rospy.get_param('~window_scale'))
         gui.init_wheel_bar()
         gui.init_bars()
+        
+        #print(self.threshold_angles)	
         gui.set_th_left(self.threshold_angles[0])
         gui.set_th_right(self.threshold_angles[1])
+        
+        gui.set_ith_left(self.threshold_iangles[0])
+        gui.set_ith_right(self.threshold_iangles[1])
 
         #gui.set_bar_thresholds(self.threshold_soft_bars)
         #gui.set_bar_thresholds(self.threshold_hard_bars)

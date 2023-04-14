@@ -90,7 +90,9 @@ class DWheel:
         # 	- central line is defined by q1 and q2
         #	- right line is defined by r1 and r2
         # 	- left line is defined by l1 and l2
-        current_middle_angle = float((wheel_bar_move[0] + wheel_bar_move[1])/2) 
+        
+        current_middle_angle = float((wheel_bar_move[0] + wheel_bar_move[1])/2)
+         
         q1 = (int(self.center_coordinates[0] - math.cos(math.pi*current_middle_angle/180)*(self.big_rad - self.thickness/2)), 
               int(self.center_coordinates[1] - math.sin(math.pi*current_middle_angle/180)*(self.big_rad - self.thickness/2))) 
         q2 = (int(self.center_coordinates[0] - math.cos(math.pi*current_middle_angle/180)*(self.big_rad + self.thickness/2)), 
@@ -111,10 +113,23 @@ class DWheel:
               int(self.center_coordinates[1] - math.sin(math.pi*self.th_right/180)*(self.big_rad - self.thickness/2)))
         r2 = (int(self.center_coordinates[0] - math.cos(math.pi*self.th_right/180)*(self.big_rad + self.thickness/2)), 
               int(self.center_coordinates[1] - math.sin(math.pi*self.th_right/180)*(self.big_rad + self.thickness/2)))
+              
+        il1 = (int(self.center_coordinates[0] - math.cos(math.pi*self.ith_left/180)*(self.big_rad - self.thickness/2)), 
+               int(self.center_coordinates[1] - math.sin(math.pi*self.ith_left/180)*(self.big_rad - self.thickness/2)))
+        il2 = (int(self.center_coordinates[0] - math.cos(math.pi*self.ith_left/180)*(self.big_rad + self.thickness/2)), 
+               int(self.center_coordinates[1] - math.sin(math.pi*self.ith_left/180)*(self.big_rad + self.thickness/2)))
+       
+        ir1 = (int(self.center_coordinates[0] - math.cos(math.pi*self.ith_right/180)*(self.big_rad - self.thickness/2)), 
+               int(self.center_coordinates[1] - math.sin(math.pi*self.ith_right/180)*(self.big_rad - self.thickness/2)))
+        ir2 = (int(self.center_coordinates[0] - math.cos(math.pi*self.ith_right/180)*(self.big_rad + self.thickness/2)), 
+               int(self.center_coordinates[1] - math.sin(math.pi*self.ith_right/180)*(self.big_rad + self.thickness/2)))
 
         # draw the line
         tmp = cv2.line(tmp, l1,l2, COLOR_TH, 2) 
         tmp = cv2.line(tmp, r1,r2, COLOR_TH, 2)
+        
+        tmp = cv2.line(tmp, il1,il2, COLOR_TH, 2) 
+        tmp = cv2.line(tmp, ir1,ir2, COLOR_TH, 2)
         
 
         
